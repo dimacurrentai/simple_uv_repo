@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import respx
 
@@ -18,6 +20,17 @@ def test_client_subtract():
         return_value=httpx.Response(200, json={"result": 3.0})
     )
     assert CalcClient().subtract(10, 7) == 3.0
+
+
+@respx.mock
+def test_client_multiply():
+    route = respx.post("http://localhost:8888/multiply").mock(
+        return_value=httpx.Response(200, json={"result": 42.0})
+    )
+    assert CalcClient().multiply(6, 7) == 42.0
+    assert route.called
+    sent_body = json.loads(route.calls.last.request.read())
+    assert sent_body == {"a": 6, "b": 7}
 
 
 @respx.mock

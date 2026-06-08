@@ -33,7 +33,16 @@ _HTML = """<!DOCTYPE html>
       border-radius: 6px;
       background: #fff;
     }
-    .buttons { display: flex; gap: 10px; }
+    .controls { display: flex; gap: 10px; }
+    select#op {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+    }
     button {
       flex: 1;
       padding: 10px;
@@ -62,14 +71,19 @@ _HTML = """<!DOCTYPE html>
     <input id="a" type="number" placeholder="a" value="0" step="any">
     <input id="b" type="number" placeholder="b" value="0" step="any">
   </div>
-  <div class="buttons">
-    <button onclick="calc('add')">Add</button>
-    <button onclick="calc('subtract')">Subtract</button>
+  <div class="controls">
+    <select id="op">
+      <option value="add">+</option>
+      <option value="subtract">−</option>
+      <option value="multiply">×</option>
+    </select>
+    <button onclick="calc()">Compute</button>
   </div>
   <div id="result"></div>
   <div id="error"></div>
   <script>
-    async function calc(op) {
+    async function calc() {
+      const op = document.getElementById('op').value;
       const a = parseFloat(document.getElementById('a').value);
       const b = parseFloat(document.getElementById('b').value);
       document.getElementById('error').textContent = '';
@@ -114,6 +128,11 @@ def add(nums: Numbers) -> Result:
 @app.post("/subtract", response_model=Result)
 def subtract(nums: Numbers) -> Result:
     return Result(result=nums.a - nums.b)
+
+
+@app.post("/multiply", response_model=Result)
+def multiply(nums: Numbers) -> Result:
+    return Result(result=nums.a * nums.b)
 
 
 def main() -> None:

@@ -48,11 +48,40 @@ def test_add_zeros():
     assert r.json() == {"result": 0.0}
 
 
+def test_multiply_positive():
+    r = client.post("/multiply", json={"a": 3, "b": 4})
+    assert r.status_code == 200
+    assert r.json() == {"result": 12.0}
+
+
+def test_multiply_signed():
+    r = client.post("/multiply", json={"a": -2, "b": 5})
+    assert r.status_code == 200
+    assert r.json() == {"result": -10.0}
+
+
+def test_multiply_floats():
+    r = client.post("/multiply", json={"a": 1.5, "b": 2.0})
+    assert r.status_code == 200
+    assert r.json() == {"result": 3.0}
+
+
 def test_index_returns_html():
     r = client.get("/")
     assert r.status_code == 200
     assert "text/html" in r.headers["content-type"]
     assert "<title>CalcServer</title>" in r.text
+
+
+def test_index_has_operator_dropdown():
+    r = client.get("/")
+    assert r.status_code == 200
+    text = r.text
+    assert '<select id="op">' in text
+    assert '<option value="add">' in text
+    assert '<option value="subtract">' in text
+    assert '<option value="multiply">' in text
+    assert text.count("onclick=\"calc()\"") == 1
 
 
 def test_invalid_payload_returns_422():
